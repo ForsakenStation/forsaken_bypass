@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. ./Forsaken/env
+
 downloadList() {
     rm -rf ./lists
     wgetAndProgressDialog https://github.com/vguardiola/romlists/archive/refs/heads/main.zip ./lists.zip
@@ -63,10 +65,12 @@ downloadEmulators() {
     wgetAndProgressDialog https://github.com/cemu-project/Cemu/releases/download/v2.6/Cemu-2.6-x86_64.AppImage ./cemu.AppImage
     wgetAndProgressDialog https://github.com/pkgforge-dev/Dolphin-emu-AppImage/releases/download/2509%402025-12-15_1765785200/Dolphin_Emulator-2509-anylinux.squashfs-x86_64.AppImage ./dolphin.AppImage
     wgetAndProgressDialog https://github.com/Portable-Linux-Apps/ruffle-AppImage/releases/download/nightly-2025-12-22%402025-12-22_1766420590/Ruffle-nightly-2025-12-22-x86_64.AppImage ./ruffle.AppImage
+    wgetAndProgressDialog https://github.com/DirtBagXon/hypseus-singe/releases/download/v2.11.6/hypseus-singe_v2.11.6_AppImage.tar.gz ./hypseus.AppImage
     wgetAndProgressDialog https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch.7z ./RetroArch.7z
     wgetAndProgressDialog https://buildbot.libretro.com/stable/1.22.2/linux/x86_64/RetroArch_cores.7z ./RetroArch_cores.7z
     wgetAndProgressDialog https://gitlab.com/es-de/emulationstation-de/-/package_files/246875981/download ./es-de.AppImage
     wgetAndProgressDialog https://git.citron-emu.org/Citron/Emulator/releases/download/0.11.0/Citron_stable_0.11.0_linux.AppImage ./citron.AppImage
+    wgetAndProgressDialog https://github.com/libretro/overlay-borders/archive/refs/heads/master.zip ./overlay-borders.zip
 
     7z x ./shadps4.zip -o./ && rm ./shadps4.zip && mv Shadps4*.AppImage ./shadps4.AppImage
     7z x ./RetroArch.7z -o./ && rm ./RetroArch.7z
@@ -74,9 +78,14 @@ downloadEmulators() {
     cp -r ./RetroArch-Linux-x86_64/RetroArch-Linux-x86_64.AppImage.home/.config/retroarch/* ~/.config/retroarch/
     mv ./RetroArch-Linux-x86_64/RetroArch-Linux-x86_64.AppImage ./retroarch.AppImage
     rm -rf ./RetroArch-Linux-x86_64
+
+    7z x ./overlay-borders.zip && ./overlay-borders.zip
+    mv ./overlay-borders-master/* ~/.config/retroarch/overlays/borders/
+    rm -rf ./overlay-borders-master
+
     chmod a+x ./*.AppImage
 }
-
+c
 installCommandPerDistribution() {
     case $(cat /etc/*-release | grep -E '^ID_LIKE=' | cut -d'=' -f2) in
         debian|ubuntu)
@@ -130,17 +139,53 @@ updateScripts() {
   wgetAndProgressDialog https://github.com/vguardiola/forsaken_emu/raw/refs/heads/main/setup.sh ./setup.sh
   wgetAndProgressDialog https://github.com/vguardiola/forsaken_emu/raw/refs/heads/main/Forsaken/bypass.sh ./Forsaken/bypass.sh
   wgetAndProgressDialog https://github.com/vguardiola/forsaken_emu/raw/refs/heads/main/Forsaken/config.sh ./Forsaken/config.sh
+  wgetAndProgressDialog https://github.com/vguardiola/forsaken_emu/raw/refs/heads/main/Forsaken/config.json ./Forsaken/config.json
+}
+
+configEnvironment() {
+choice=$(zenity --info --text="Config RetroArch & ES-DE directories" \
+        --icon="./Forsaken/icon.png" --width=640 --height=480 \
+        --extra-button="RetroArch config directory" \
+        --extra-button="ES-DE config directory" 2>/dev/null
+        )
+
+  case $choice in
+    "ES-DE config directory")
+      dir=$(zenity --file-selection --directory 2>/dev/null)
+      echo $dir
+      configEnvironment
+      ;;
+    "RetroArch config directory")
+      dir=$(zenity --file-selection --directory 2>/dev/null)
+      echo $dir
+      configEnvironment
+      ;;
+    *)
+      return
+      ;;
+  esac
 }
 
 startDialog() {
+    echo "${RETROARCH_CONFIG_DIR}"
     choice=$(zenity --info --text="Welcome to Forsaken Emulator Setup" \
         --icon="./Forsaken/icon.png" --width=640 --height=480 \
-        --extra-button="Generate Roms" \
-        --extra-button="Install Game lists" \
+        --extra-button="Download Emulators" \
         --extra-button="Update only scripts" \
-        --extra-button="Download Emulators" 2>/dev/null
+        --extra-button="Install Game lists" \
+        --extra-button="Generate Roms" \
+        --extra-button="Config Platforms" \
+        --extra-button="Config Environment"  2>/dev/null
         )
     case $choice in
+        "Config Environment")
+            configEnvironment
+            startDialog
+            ;;
+        "Config Platforms")
+            ./Forsaken/config.sh
+            startDialog
+            ;;
         "Update only scripts")
             updateScripts
             startDialog

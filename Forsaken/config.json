@@ -119,7 +119,7 @@
         },
         {
             "system": "atarijaguarcd",
-            "command": "..\\bigpemu\\BigPEmu.exe",
+            "command": "../retroarch.AppImage -f -L ~/.config/retroarch/cores/virtualjaguar-libretro.so",
             "useForeverMode": false,
             "acceptZipFiles": true,
             "todo": true,
@@ -877,6 +877,13 @@
         {
             "system": "zxspectrum",
             "command": "../retroarch.AppImage -f -L ~/.config/retroarch/cores/fuse_libretro.so",
+            "useForeverMode": false,
+            "acceptZipFiles": true,
+            "corePreferences": {}
+        },
+        {
+            "system": "daphne",
+            "command": "../hypseus.AppImage",
             "useForeverMode": false,
             "acceptZipFiles": true,
             "corePreferences": {}

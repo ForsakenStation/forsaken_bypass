@@ -59,6 +59,11 @@ Support includes but is not limited to:
 *   Microsoft (Xbox, Xbox 360)
 *   And classic computers (Amiga, C64, MSX, etc.)
 
+## ⚠️ Disclaimer
+
+This project is provided as-is and comes with no guarantees or warranties. Use at your own risk. 
+The author is not responsible for any damages or issues caused by the use of this software.
+We don't provide any support for the emulators or ROMs included in this project. And we don't distribute any ROMs, keys, or system bios.
 
 ## 📝 License
 
@@ -68,5 +73,5 @@ This project is licensed under the MIT License – see the [LICENSE](LICENSE) fi
 
 *   [Arley4d](https://github.com/Arley4d) for the roms list and the inspiration for this project.
 
-
+https://www.romspedia.com/bios
 

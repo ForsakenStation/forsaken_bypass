@@ -63,7 +63,7 @@ add_emulator() {
              return
         fi
         
-        # Determine if default bools are needed
+        # Determine if default booleans are needed
         [ -z "$forever" ] && forever="false"
         [ -z "$zip" ] && zip="true"
 
